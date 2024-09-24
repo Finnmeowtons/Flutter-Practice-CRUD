@@ -99,98 +99,93 @@ class _StudentState extends State<Student> {
         ],
       ),
       body: Center(
-        child: Column(
-          children: [
-            RefreshIndicator(
-              onRefresh: () async {
-                setState(() {
-                  futureStudent = StudentRepositoryImpl().fetchStudents();
-                });
-              },
-              child: FutureBuilder<List<StudentModel>>(
-                  future: futureStudent,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    } else if (snapshot.hasData ) {
-                      final students = snapshot.data!;
-                      return Expanded(
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data?.length,
-                            itemBuilder: (context, index) {
-                              final student = students[index];
-                              return Center(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              StudentInformation(
-                                            student: student,
-                                          ),
-                                        )).then((_) => setState(() {
-                                          futureStudent =
-                                              StudentRepositoryImpl()
-                                                  .fetchStudents();
-                                        }));
-                                  },
-                                  child: Card.outlined(
-                                    child: SizedBox(
-                                      width: 360,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "${student.lastName}, ${student.firstName} ",
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18),
-                                            ),
-                                            const SizedBox(
-                                              height: 8,
-                                            ),
-                                            Text(
-                                              "${student.year} - ${student.course}",
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                            const SizedBox(
-                                              height: 4,
-                                            ),
-                                            Text(
-                                              student.enrolled == "1"
-                                                  ? "Student is enrolled"
-                                                  : "Student is not enrolled",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: student.enrolled == "1"
-                                                      ? Colors.green
-                                                      : Colors.red),
-                                            ),
-                                            const SizedBox(
-                                              height: 4,
-                                            ),
-                                          ],
-                                        ),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            setState(() {
+              futureStudent = StudentRepositoryImpl().fetchStudents();
+            });
+          },
+          child: FutureBuilder<List<StudentModel>>(
+              future: futureStudent,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasData ) {
+                  final students = snapshot.data!;
+                  return Expanded(
+                    child: ListView.builder(
+                        itemCount: snapshot.data?.length,
+                        itemBuilder: (context, index) {
+                          final student = students[index];
+                          return Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          StudentInformation(
+                                        student: student,
                                       ),
+                                    )).then((_) => setState(() {
+                                      futureStudent =
+                                          StudentRepositoryImpl()
+                                              .fetchStudents();
+                                    }));
+                              },
+                              child: Card.outlined(
+                                child: SizedBox(
+                                  width: 360,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${student.lastName}, ${student.firstName} ",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18),
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text(
+                                          "${student.year} - ${student.course}",
+                                          style:
+                                              const TextStyle(fontSize: 16),
+                                        ),
+                                        const SizedBox(
+                                          height: 4,
+                                        ),
+                                        Text(
+                                          student.enrolled == "1"
+                                              ? "Student is enrolled"
+                                              : "Student is not enrolled",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: student.enrolled == "1"
+                                                  ? Colors.green
+                                                  : Colors.red),
+                                        ),
+                                        const SizedBox(
+                                          height: 4,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              );
-                            }),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('${snapshot.error}');
-                    }
-                    return Text('${snapshot.error}');
-                  }),
-            ),
-          ],
+                              ),
+                            ),
+                          );
+                        }),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+                return Text('${snapshot.error}');
+              }),
         ),
       ),
     );
